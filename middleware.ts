@@ -20,42 +20,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // 检查是否为公开路径
-  const isPublicPath = publicPaths.includes(pathname)
-
-  // 获取认证token
-  const token = request.cookies.get("auth-token")?.value
-  const isAuthenticated = !!token
-
-  // 根路径重定向到仪表板
-  if (pathname === "/") {
-    if (isAuthenticated) {
-      return NextResponse.redirect(new URL("/dashboard", request.url))
-    } else {
-      return NextResponse.redirect(new URL("/login", request.url))
-    }
-  }
-
-  // 如果是公开路径
-  if (isPublicPath) {
-    // 如果已认证且访问登录页，重定向到仪表板
-    if (isAuthenticated && pathname === "/login") {
-      const redirectPath = request.nextUrl.searchParams.get("redirect") || "/dashboard"
-      return NextResponse.redirect(new URL(redirectPath, request.url))
-    }
-    return NextResponse.next()
-  }
-
-  // 如果是受保护的路径但未认证
-  if (!isAuthenticated) {
-    const loginUrl = new URL("/login", request.url)
-    // 保存原始路径用于登录后重定向
-    if (pathname !== "/dashboard") {
-      loginUrl.searchParams.set("redirect", pathname)
-    }
-    return NextResponse.redirect(loginUrl)
-  }
-
+  // 允许所有请求通过
   return NextResponse.next()
 }
 

@@ -118,24 +118,20 @@ export const config = {
     defaultZoom: 10,
   },
 
-  // 第三方服务配置
   services: {
     // 百度统计
     baiduAnalytics: {
-      enabled: true,
-      trackingId: process.env.NEXT_PUBLIC_BAIDU_ANALYTICS_ID || "",
+      enabled: !!process.env.NEXT_PUBLIC_BAIDU_ANALYTICS_ID,
     },
 
-    // 七鱼客服
+    // 七鱼客服 - 实际配置在服务端
     qiyu: {
-      enabled: true,
-      appKey: process.env.NEXT_PUBLIC_QIYU_APP_KEY || "",
+      enabled: true, // 功能开关
     },
 
     // Sentry错误监控
     sentry: {
-      enabled: true,
-      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || "",
+      enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
     },
   },
 

@@ -40,6 +40,7 @@ import {
   Megaphone,
 } from "lucide-react"
 import Image from "next/image"
+import { getThemeForPath } from "@/lib/theme-colors"
 
 const navigationItems = [
   {
@@ -143,25 +144,42 @@ export function Sidebar() {
                 )}
                 <div className="space-y-1">
                   {section.items.map((item) => {
-                    const isActive = pathname === item.href
+                    const isActive = pathname === item.href || (pathname === "/" && item.href === "/dashboard")
+                    const theme = getThemeForPath(item.href)
+
                     const NavItem = (
-                      <Button
-                        key={item.name}
-                        variant={isActive ? "default" : "ghost"}
-                        className={cn(
-                          "w-full justify-start h-10 px-3",
-                          isCollapsed ? "px-2" : "px-3",
-                          isActive
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                        )}
-                        asChild
-                      >
-                        <Link href={item.href}>
-                          <item.icon className={cn("h-4 w-4", isCollapsed ? "mx-auto" : "mr-3")} />
-                          {!isCollapsed && <span className="truncate">{item.name}</span>}
-                        </Link>
-                      </Button>
+                      <div key={item.name} className="relative">
+                        <Button
+                          variant={isActive ? "default" : "ghost"}
+                          className={cn(
+                            "w-full justify-start h-10 transition-all duration-200",
+                            isCollapsed ? "px-2" : "px-3",
+                            isActive
+                              ? "text-white hover:opacity-90"
+                              : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                          )}
+                          style={
+                            isActive
+                              ? {
+                                  background: `linear-gradient(to right, ${theme.primary}, ${theme.primary}dd)`,
+                                }
+                              : {}
+                          }
+                          asChild
+                        >
+                          <Link href={item.href}>
+                            <item.icon className={cn("h-4 w-4", isCollapsed ? "mx-auto" : "mr-3")} />
+                            {!isCollapsed && <span className="truncate">{item.name}</span>}
+                          </Link>
+                        </Button>
+                        <div
+                          className="absolute right-0 top-0 bottom-0 w-[3px] rounded-r transition-all duration-200"
+                          style={{
+                            backgroundColor: isActive ? theme.shadow : "transparent",
+                            boxShadow: isActive ? `0 0 8px ${theme.shadow}80` : "none",
+                          }}
+                        />
+                      </div>
                     )
 
                     if (isCollapsed) {

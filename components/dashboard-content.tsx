@@ -24,9 +24,13 @@ import {
 import { SalesChart } from "@/components/charts/sales-chart"
 import { FinanceChart } from "@/components/charts/finance-chart"
 import { PerformanceChart } from "@/components/charts/performance-chart"
+import { usePathname } from "next/navigation"
+import { getThemeForPath } from "@/lib/theme-colors"
 
 export function DashboardContent() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const pathname = usePathname()
+  const theme = getThemeForPath(pathname)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -45,6 +49,7 @@ export function DashboardContent() {
       icon: Users,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
+      themeColor: "customers",
     },
     {
       title: "月收入",
@@ -54,6 +59,7 @@ export function DashboardContent() {
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-50",
+      themeColor: "finance",
     },
     {
       title: "订单数量",
@@ -63,6 +69,7 @@ export function DashboardContent() {
       icon: ShoppingCart,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
+      themeColor: "tasks",
     },
     {
       title: "转化率",
@@ -72,14 +79,29 @@ export function DashboardContent() {
       icon: TrendingUp,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
+      themeColor: "analytics",
     },
   ]
 
   const projects = [
-    { name: "客户管理系统升级", progress: 85, status: "进行中", dueDate: "2024-01-15", team: 5 },
-    { name: "移动端应用开发", progress: 60, status: "进行中", dueDate: "2024-02-01", team: 8 },
-    { name: "数据分析平台", progress: 95, status: "即将完成", dueDate: "2024-01-10", team: 3 },
-    { name: "安全系统优化", progress: 40, status: "计划中", dueDate: "2024-02-15", team: 6 },
+    {
+      name: "客户管理系统升级",
+      progress: 85,
+      status: "进行中",
+      dueDate: "2024-01-15",
+      team: 5,
+      themeColor: "customers",
+    },
+    { name: "移动端应用开发", progress: 60, status: "进行中", dueDate: "2024-02-01", team: 8, themeColor: "mobileApp" },
+    { name: "数据分析平台", progress: 95, status: "即将完成", dueDate: "2024-01-10", team: 3, themeColor: "analytics" },
+    {
+      name: "安全系统优化",
+      progress: 40,
+      status: "计划中",
+      dueDate: "2024-02-15",
+      team: 6,
+      themeColor: "permissionManagement",
+    },
   ]
 
   const recentActivities = [
@@ -114,10 +136,10 @@ export function DashboardContent() {
   ]
 
   const quickActions = [
-    { name: "新建客户", icon: Users, color: "bg-blue-500 hover:bg-blue-600" },
-    { name: "创建任务", icon: CheckCircle, color: "bg-green-500 hover:bg-green-600" },
-    { name: "发起会议", icon: MessageSquare, color: "bg-purple-500 hover:bg-purple-600" },
-    { name: "生成报告", icon: FileText, color: "bg-orange-500 hover:bg-orange-600" },
+    { name: "新建客户", icon: Users, color: "bg-blue-500 hover:bg-blue-600", themeColor: "customers" },
+    { name: "创建任务", icon: CheckCircle, color: "bg-green-500 hover:bg-green-600", themeColor: "tasks" },
+    { name: "发起会议", icon: MessageSquare, color: "bg-purple-500 hover:bg-purple-600", themeColor: "communication" },
+    { name: "生成报告", icon: FileText, color: "bg-orange-500 hover:bg-orange-600", themeColor: "analytics" },
   ]
 
   return (
@@ -145,41 +167,55 @@ export function DashboardContent() {
 
       {/* 统计卡片 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.title} className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
-                  <div className="flex items-center mt-2">
-                    {stat.changeType === "increase" ? (
-                      <ArrowUpRight className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <ArrowDownRight className="h-4 w-4 text-red-500" />
-                    )}
-                    <span
-                      className={`text-sm font-medium ml-1 ${
-                        stat.changeType === "increase" ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {stat.change}
-                    </span>
-                    <span className="text-sm text-gray-500 ml-1">vs 上月</span>
+        {stats.map((stat) => {
+          const cardTheme = getThemeForPath(`/${stat.themeColor}`)
+          return (
+            <Card
+              key={stat.title}
+              className="hover:shadow-lg transition-all duration-200 relative overflow-hidden"
+              style={{
+                borderLeft: `5px solid ${cardTheme.border}`,
+              }}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                    <div className="flex items-center mt-2">
+                      {stat.changeType === "increase" ? (
+                        <ArrowUpRight className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <ArrowDownRight className="h-4 w-4 text-red-500" />
+                      )}
+                      <span
+                        className={`text-sm font-medium ml-1 ${
+                          stat.changeType === "increase" ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {stat.change}
+                      </span>
+                      <span className="text-sm text-gray-500 ml-1">vs 上月</span>
+                    </div>
+                  </div>
+                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
                   </div>
                 </div>
-                <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       {/* 图表区域 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="col-span-1">
+        <Card
+          className="col-span-1 transition-all duration-200"
+          style={{
+            borderLeft: `5px solid ${getThemeForPath("/analytics").border}`,
+          }}
+        >
           <CardHeader>
             <CardTitle className="flex items-center">
               <BarChart3 className="h-5 w-5 mr-2" />
@@ -192,7 +228,12 @@ export function DashboardContent() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-1">
+        <Card
+          className="col-span-1 transition-all duration-200"
+          style={{
+            borderLeft: `5px solid ${getThemeForPath("/finance").border}`,
+          }}
+        >
           <CardHeader>
             <CardTitle className="flex items-center">
               <DollarSign className="h-5 w-5 mr-2" />
@@ -209,7 +250,12 @@ export function DashboardContent() {
       {/* 项目进度和活动 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 项目进度 */}
-        <Card className="lg:col-span-2">
+        <Card
+          className="lg:col-span-2 transition-all duration-200"
+          style={{
+            borderLeft: `5px solid ${getThemeForPath("/projects").border}`,
+          }}
+        >
           <CardHeader>
             <CardTitle className="flex items-center">
               <Target className="h-5 w-5 mr-2" />
@@ -219,49 +265,64 @@ export function DashboardContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {projects.map((project) => (
-                <div key={project.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900">{project.name}</h4>
-                      <Badge
-                        variant={
-                          project.status === "即将完成"
-                            ? "default"
-                            : project.status === "进行中"
-                              ? "secondary"
-                              : "outline"
-                        }
-                      >
-                        {project.status}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {project.dueDate}
-                      </span>
-                      <span className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        {project.team} 人
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span>进度</span>
-                        <span className="font-medium">{project.progress}%</span>
+              {projects.map((project) => {
+                const projectTheme = getThemeForPath(`/${project.themeColor}`)
+                return (
+                  <div
+                    key={project.name}
+                    className="flex items-center justify-between p-4 rounded-lg transition-all duration-200 relative"
+                    style={{
+                      borderLeft: `4px solid ${projectTheme.border}`,
+                      backgroundColor: projectTheme.bg,
+                    }}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-gray-900">{project.name}</h4>
+                        <Badge
+                          variant={
+                            project.status === "即将完成"
+                              ? "default"
+                              : project.status === "进行中"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {project.status}
+                        </Badge>
                       </div>
-                      <Progress value={project.progress} className="h-2" />
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {project.dueDate}
+                        </span>
+                        <span className="flex items-center">
+                          <Users className="h-4 w-4 mr-1" />
+                          {project.team} 人
+                        </span>
+                      </div>
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span>进度</span>
+                          <span className="font-medium">{project.progress}%</span>
+                        </div>
+                        <Progress value={project.progress} className="h-2" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </CardContent>
         </Card>
 
         {/* 最近活动 */}
-        <Card>
+        <Card
+          className="transition-all duration-200"
+          style={{
+            borderLeft: `5px solid ${getThemeForPath("/collaboration").border}`,
+          }}
+        >
           <CardHeader>
             <CardTitle className="flex items-center">
               <Activity className="h-5 w-5 mr-2" />
@@ -292,29 +353,51 @@ export function DashboardContent() {
       </div>
 
       {/* 快捷操作 */}
-      <Card>
+      <Card
+        className="transition-all duration-200"
+        style={{
+          borderLeft: `5px solid ${theme.border}`,
+        }}
+      >
         <CardHeader>
           <CardTitle>快捷操作</CardTitle>
           <CardDescription>常用功能快速访问</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {quickActions.map((action) => (
-              <Button
-                key={action.name}
-                variant="outline"
-                className={`h-20 flex flex-col items-center justify-center space-y-2 hover:scale-105 transition-transform ${action.color} hover:text-white border-2`}
-              >
-                <action.icon className="h-6 w-6" />
-                <span className="text-sm font-medium">{action.name}</span>
-              </Button>
-            ))}
+            {quickActions.map((action) => {
+              const actionTheme = getThemeForPath(`/${action.themeColor}`)
+              return (
+                <Button
+                  key={action.name}
+                  variant="outline"
+                  className="h-20 flex flex-col items-center justify-center space-y-2 hover:scale-105 transition-all duration-200 border-2 relative overflow-hidden bg-transparent"
+                  style={{
+                    borderColor: actionTheme.border,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = actionTheme.bg
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent"
+                  }}
+                >
+                  <action.icon className="h-6 w-6" style={{ color: actionTheme.primary }} />
+                  <span className="text-sm font-medium">{action.name}</span>
+                </Button>
+              )
+            })}
           </div>
         </CardContent>
       </Card>
 
       {/* 性能监控 */}
-      <Card>
+      <Card
+        className="transition-all duration-200"
+        style={{
+          borderLeft: `5px solid ${getThemeForPath("/system-monitor").border}`,
+        }}
+      >
         <CardHeader>
           <CardTitle className="flex items-center">
             <Activity className="h-5 w-5 mr-2" />
