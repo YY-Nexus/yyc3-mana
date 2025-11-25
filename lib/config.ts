@@ -111,10 +111,9 @@ export const config = {
     colors: ["#0ea5e9", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#f97316", "#84cc16"],
   },
 
-  // 地图配置
+  // 地图配置（客户端配置）
   map: {
     provider: "amap", // 高德地图
-    apiKey: process.env.NEXT_PUBLIC_AMAP_KEY || "",
     defaultCenter: [116.397428, 39.90923], // 北京
     defaultZoom: 10,
   },
@@ -205,7 +204,7 @@ export const config = {
     privacyPolicy: "/privacy-policy",
     termsOfService: "/terms-of-service",
     cookiePolicy: "/cookie-policy",
-    copyright: "© 2024 锦澜家居. 保留所有权利.",
+    copyright: "© 2025 锦澜家居. 保留所有权利.",
   },
 }
 
