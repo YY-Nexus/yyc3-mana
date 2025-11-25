@@ -1,12 +1,12 @@
-"use client"
-
-import { AdaptiveSidebar } from "@/components/layout/adaptive-sidebar"
-import { OKRManagement } from "@/components/okr-management"
+import { OKRManagementEnhanced } from "@/components/okr-management-enhanced"
+import { PageContainer } from "@/components/layout/page-container"
+import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 
 export default function OKRPage() {
   return (
-    <AdaptiveSidebar defaultModule="okr">
-      <OKRManagement />
-    </AdaptiveSidebar>
+    <PageContainer>
+      <OKRManagementEnhanced />
+      <FloatingNavButtons />
+    </PageContainer>
   )
 }
